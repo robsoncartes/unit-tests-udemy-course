@@ -29,8 +29,8 @@ public class DateUtils {
     /**
      * Returns the current date with the difference of days sent per parameter
      *      the Date can be in the future (positive parameter) or in the past (negative parameter).
-     * @param
-     * @return
+     * @param days Number of days to be incremented/decremented
+     * @return updated date
      */
 
     public static Date getDateWithDaysDifference(int days) {
@@ -76,8 +76,10 @@ public class DateUtils {
     }
 
     /**
-     * @param
-     * @param
+     * Checks if a given date is the desired day of the week
+     *
+     * @param date Date to be evaluated
+     * @param dayOfWeek <code>true</code> if it is the desired day of the week, <code>false</code> otherwise
      * @return
      */
 
