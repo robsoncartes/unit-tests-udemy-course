@@ -1,6 +1,8 @@
-package br.com.releasesolutions.models;
+package br.com.releasesolutions.services;
 
-import br.com.releasesolutions.services.LeaseService;
+import br.com.releasesolutions.models.Lease;
+import br.com.releasesolutions.models.Movie;
+import br.com.releasesolutions.models.User;
 import br.com.releasesolutions.utils.DateUtils;
 import org.junit.Test;
 
