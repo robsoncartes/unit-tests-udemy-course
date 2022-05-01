@@ -1,8 +1,11 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.User;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,6 +14,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class AssertTest {
@@ -162,5 +166,20 @@ public class AssertTest {
         int[] copy = {1, 2, 3};
 
         assertArrayEquals(numbers, copy);
+    }
+
+    @Test
+    public void test_assertThat() {
+
+        User user1 = new User("User 1");
+        Lease lease1 = new Lease();
+
+        lease1.setPrice(5.0);
+        Double i = 5.0;
+        double j = 5.0;
+
+        assertThat(user1.getName(), is("User 1"));
+        assertThat(lease1.getPrice(), is(equalTo(5.0)));
+        assertThat(i, is(equalTo(j)));
     }
 }
