@@ -1,5 +1,7 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.exceptions.MovieWithoutStockException;
+import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
@@ -67,7 +69,7 @@ public class LeaseServiceTest {
         error.checkThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = MovieWithoutStockException.class)
     public void test_leaseMovieWithoutStock() throws Exception {
 
         LeaseService service = new LeaseService();
@@ -79,22 +81,6 @@ public class LeaseServiceTest {
     }
 
     @Test
-    public void test_leaseMovieWithoutStock_2() {
-
-        LeaseService service = new LeaseService();
-        User user = new User("User 1");
-        Movie movie = new Movie("Movie 1", 0, 5.0);
-
-        // action
-        try {
-            service.leaseMovie(user, movie);
-            fail("Should throw an exception.");
-        } catch (Exception e) {
-            assertThat(e.getMessage(), is("Movie unavailable."));
-        }
-    }
-
-    @Test
     public void test_leaseMovieWithoutStock_3() throws Exception {
 
         LeaseService service = new LeaseService();
@@ -102,9 +88,40 @@ public class LeaseServiceTest {
         Movie movie = new Movie("Movie 1", 0, 5.0);
 
         expectedException.expect(Exception.class);
-        expectedException.expectMessage("Movie unavailable.");
 
         // action
         service.leaseMovie(user, movie);
+    }
+
+    @Test
+    public void test_leaseMovieWithUserEqualNull() throws MovieWithoutStockException {
+
+        // best form of implementation
+        // Scenery
+
+        LeaseService service = new LeaseService();
+        Movie movie = new Movie("Movie 1", 1, 5.0);
+
+        // action
+        try {
+            service.leaseMovie(null, movie);
+            fail();
+
+        } catch (RentalException e) {
+            assertThat(e.getMessage(), is("User null."));
+        }
+    }
+
+    @Test
+    public void test_leaseMovieWithMovieEqualNull() throws RentalException, MovieWithoutStockException {
+
+        // Scenery
+        LeaseService service = new LeaseService();
+        User user = new User("User 1");
+        expectedException.expect(RentalException.class);
+        expectedException.expectMessage("Movie null.");
+
+        // Actions
+        service.leaseMovie(user, null);
     }
 }

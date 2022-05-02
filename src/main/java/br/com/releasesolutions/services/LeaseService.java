@@ -1,5 +1,7 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.exceptions.MovieWithoutStockException;
+import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
@@ -10,11 +12,16 @@ import static br.com.releasesolutions.utils.DateUtils.addDays;
 
 public class LeaseService {
 
-    public Lease leaseMovie(User user, Movie movie) throws Exception {
+    public Lease leaseMovie(User user, Movie movie) throws MovieWithoutStockException, RentalException {
 
-        if (movie.getStock() == 0){
-            throw new Exception("Movie unavailable.");
-        }
+        if (user == null)
+            throw new RentalException("User null.");
+
+        if (movie == null)
+            throw new RentalException("Movie null.");
+
+        if (movie.getStock() == 0)
+            throw new MovieWithoutStockException();
 
         Lease lease = new Lease();
         lease.setMovie(movie);
