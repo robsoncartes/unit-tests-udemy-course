@@ -5,6 +5,10 @@ import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -21,17 +25,46 @@ import static org.junit.Assert.fail;
 
 public class LeaseServiceTest {
 
+    private LeaseService leaseService;
+
+    // Counter definition
+    private static int counter = 0;
+
     @Rule
     public ErrorCollector error = new ErrorCollector();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Before
+    public void setup() {
+        System.out.println("Before");
+        leaseService = new LeaseService();
+        // increment
+        // counter printing
+        counter++;
+        System.out.println(counter);
+    }
+
+    @After
+    public void tearDown() {
+        System.out.println("After");
+    }
+
+    @BeforeClass
+    public static void setupClass() {
+        System.out.println("BeforeClass");
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        System.out.println("AfterClass");
+    }
+
     @Test
     public void test() {
 
         // scenery
-        LeaseService leaseService = new LeaseService();
         User user = new User("User 1");
         Movie movie = new Movie("Movie 1", 2, 5.0);
 
@@ -56,7 +89,6 @@ public class LeaseServiceTest {
     public void test_testWithRule() throws Exception {
 
         // Scenery
-        LeaseService leaseService = new LeaseService();
         User user = new User("User 1");
         Movie movie = new Movie("Movie 1", 2, 5.0);
 
@@ -72,25 +104,25 @@ public class LeaseServiceTest {
     @Test(expected = MovieWithoutStockException.class)
     public void test_leaseMovieWithoutStock() throws Exception {
 
-        LeaseService service = new LeaseService();
+        // Scenery
         User user = new User("User 1");
         Movie movie = new Movie("Movie 1", 0, 5.0);
 
         // action
-        service.leaseMovie(user, movie);
+        leaseService.leaseMovie(user, movie);
     }
 
     @Test
     public void test_leaseMovieWithoutStock_3() throws Exception {
 
-        LeaseService service = new LeaseService();
+        // Scenery
         User user = new User("User 1");
         Movie movie = new Movie("Movie 1", 0, 5.0);
 
         expectedException.expect(Exception.class);
 
         // action
-        service.leaseMovie(user, movie);
+        leaseService.leaseMovie(user, movie);
     }
 
     @Test
@@ -98,13 +130,11 @@ public class LeaseServiceTest {
 
         // best form of implementation
         // Scenery
-
-        LeaseService service = new LeaseService();
         Movie movie = new Movie("Movie 1", 1, 5.0);
 
         // action
         try {
-            service.leaseMovie(null, movie);
+            leaseService.leaseMovie(null, movie);
             fail();
 
         } catch (RentalException e) {
@@ -116,12 +146,11 @@ public class LeaseServiceTest {
     public void test_leaseMovieWithMovieEqualNull() throws RentalException, MovieWithoutStockException {
 
         // Scenery
-        LeaseService service = new LeaseService();
         User user = new User("User 1");
         expectedException.expect(RentalException.class);
         expectedException.expectMessage("Movie null.");
 
         // Actions
-        service.leaseMovie(user, null);
+        leaseService.leaseMovie(user, null);
     }
 }
