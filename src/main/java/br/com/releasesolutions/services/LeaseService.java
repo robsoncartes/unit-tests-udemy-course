@@ -7,27 +7,38 @@ import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
 
 import java.util.Date;
+import java.util.List;
 
 import static br.com.releasesolutions.utils.DateUtils.addDays;
 
 public class LeaseService {
 
-    public Lease leaseMovie(User user, Movie movie) throws MovieWithoutStockException, RentalException {
+    public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
 
         if (user == null)
             throw new RentalException("User null.");
 
-        if (movie == null)
+        if (movies == null || movies.isEmpty())
             throw new RentalException("Movie null.");
 
-        if (movie.getStock() == 0)
-            throw new MovieWithoutStockException();
+        for(Movie movie: movies) {
+            if (movie.getStock() == 0)
+                throw new MovieWithoutStockException();
+        }
+
 
         Lease lease = new Lease();
-        lease.setMovie(movie);
+        lease.setMovies(movies);
         lease.setUser(user);
         lease.setLeaseDate(new Date());
-        lease.setPrice(movie.getLeasePrice());
+
+        Double totalPrice = 0d;
+        for (Movie movie: movies){
+            totalPrice += movie.getLeasePrice();
+        }
+
+        lease.setPrice(totalPrice);
+
 
         Date deliveryDate = new Date();
         deliveryDate = addDays(deliveryDate, 1);

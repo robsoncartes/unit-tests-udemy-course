@@ -12,6 +12,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import java.util.Date;
+import java.util.List;
 
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
 import static br.com.releasesolutions.utils.DateUtils.isSameDate;
@@ -24,7 +25,7 @@ public class LeaseServiceTest {
 
     private LeaseService leaseService;
     private User user;
-    private Movie movie;
+    private List<Movie> movies;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -34,23 +35,23 @@ public class LeaseServiceTest {
 
     @Before
     public void setup() {
-        leaseService = new LeaseService();
+
         // Common scenery
+        leaseService = new LeaseService();
         user = new User("User 1");
-        movie = new Movie("Movie 1", 2, 5.0);
+        movies = List.of(new Movie("Movie 1", 1, 5.0), new Movie("Movie 2", 2, 4.0));
     }
 
     @Test
     public void test() {
 
         // action
-        Lease lease;
 
         try {
-            lease = leaseService.leaseMovie(user, movie);
+            Lease lease = leaseService.leaseMovie(user, movies);
 
             // verification
-            assertThat(lease.getPrice(), is(equalTo(5.0)));
+            assertThat(lease.getPrice(), is(equalTo(9.0)));
             assertThat(isSameDate(lease.getLeaseDate(), new Date()), is(true));
             assertThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
 
@@ -64,10 +65,10 @@ public class LeaseServiceTest {
     public void test_testWithRule() throws Exception {
 
         // Action
-        Lease lease = leaseService.leaseMovie(user, movie);
+        Lease lease = leaseService.leaseMovie(user, movies);
 
         // Verifications
-        error.checkThat(lease.getPrice(), is(equalTo(5.0)));
+        error.checkThat(lease.getPrice(), is(equalTo(9.0)));
         error.checkThat(isSameDate(lease.getLeaseDate(), new Date()), is(true));
         error.checkThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
     }
@@ -76,21 +77,21 @@ public class LeaseServiceTest {
     public void test_leaseMovieWithoutStock() throws Exception {
 
         // Scenery
-        movie.setStock(0);
+        movies.get(0).setStock(0);
 
         // action
-        leaseService.leaseMovie(user, movie);
+        leaseService.leaseMovie(user, movies);
     }
 
     @Test
     public void test_leaseMovieWithoutStock_3() throws Exception {
 
         // Scenery
-        movie.setStock(0);
+        movies.get(0).setStock(0);
         expectedException.expect(Exception.class);
 
         // action
-        leaseService.leaseMovie(user, movie);
+        leaseService.leaseMovie(user, movies);
     }
 
     @Test
@@ -100,7 +101,7 @@ public class LeaseServiceTest {
 
         // action
         try {
-            leaseService.leaseMovie(null, movie);
+            leaseService.leaseMovie(null, movies);
             fail();
 
         } catch (RentalException e) {
