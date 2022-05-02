@@ -10,7 +10,11 @@ import static br.com.releasesolutions.utils.DateUtils.addDays;
 
 public class LeaseService {
 
-    public Lease leaseMovie(User user, Movie movie) {
+    public Lease leaseMovie(User user, Movie movie) throws Exception {
+
+        if (movie.getStock() == 0){
+            throw new Exception("Movie unavailable.");
+        }
 
         Lease lease = new Lease();
         lease.setMovie(movie);
