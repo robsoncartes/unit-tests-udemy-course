@@ -5,12 +5,14 @@ import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
+import br.com.releasesolutions.utils.DateUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +21,10 @@ import static br.com.releasesolutions.utils.DateUtils.isSameDate;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class LeaseServiceTest {
 
@@ -44,6 +49,7 @@ public class LeaseServiceTest {
     public void test_shouldRentMovie() {
 
         // Scenery
+        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
         List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
 
         // action
@@ -66,6 +72,7 @@ public class LeaseServiceTest {
     public void test_shouldRentMovieUsingRule2() throws Exception {
 
         // Scenery
+        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
         List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
 
         // Action
@@ -205,5 +212,21 @@ public class LeaseServiceTest {
         // verification
         // 4 + 4 + 3 + 2 + 1 + 0 = 14
         assertThat(lease.getPrice(), is(14.0));
+    }
+
+    @Test
+    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday() throws RentalException, MovieWithoutStockException {
+
+        assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+
+        // Scenery
+        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+
+        // Action
+        Lease delivery = leaseService.leaseMovie(user, movies);
+
+        // Verification
+        boolean isSunday = DateUtils.checkDayOfWeek(delivery.getDeliveryDate(), Calendar.MONDAY);
+        assertTrue(isSunday);
     }
 }

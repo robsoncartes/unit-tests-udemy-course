@@ -5,7 +5,9 @@ import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
+import br.com.releasesolutions.utils.DateUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,9 +59,15 @@ public class LeaseService {
         }
 
         lease.setPrice(totalPrice);
-        
+
         Date deliveryDate = new Date();
         deliveryDate = addDays(deliveryDate, 1);
+
+        boolean isSunday = DateUtils.checkDayOfWeek(deliveryDate, Calendar.SUNDAY);
+
+        if (isSunday)
+            deliveryDate = addDays(deliveryDate, 1);
+
         lease.setDeliveryDate(deliveryDate);
 
         return lease;
