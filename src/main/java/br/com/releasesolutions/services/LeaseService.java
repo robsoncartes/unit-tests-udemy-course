@@ -21,7 +21,7 @@ public class LeaseService {
         if (movies == null || movies.isEmpty())
             throw new RentalException("Movie null.");
 
-        for(Movie movie: movies) {
+        for (Movie movie : movies) {
             if (movie.getStock() == 0)
                 throw new MovieWithoutStockException();
         }
@@ -33,13 +33,31 @@ public class LeaseService {
         lease.setLeaseDate(new Date());
 
         Double totalPrice = 0d;
-        for (Movie movie: movies){
-            totalPrice += movie.getLeasePrice();
+
+        for (int i = 0; i < movies.size(); i++) {
+            Movie movie = movies.get(i);
+            Double moviePrice = movie.getLeasePrice();
+
+            switch (i) {
+                case 2:
+                    moviePrice = moviePrice * 0.75;
+                    break;
+                case 3:
+                    moviePrice = moviePrice * 0.50;
+                    break;
+                case 4:
+                    moviePrice = moviePrice * 0.25;
+                    break;
+                case 5:
+                    moviePrice = moviePrice * 0.0;
+                    break;
+            }
+
+            totalPrice += moviePrice;
         }
 
         lease.setPrice(totalPrice);
-
-
+        
         Date deliveryDate = new Date();
         deliveryDate = addDays(deliveryDate, 1);
         lease.setDeliveryDate(deliveryDate);
