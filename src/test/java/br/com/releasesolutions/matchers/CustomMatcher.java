@@ -13,4 +13,19 @@ public class CustomMatcher {
 
         return new DayOfWeekMatcher(Calendar.MONDAY);
     }
+
+    public static DifferentialDateDaysMatcher todayWithDaysOfDifference(Integer qttDays) {
+
+        return new DifferentialDateDaysMatcher(qttDays);
+    }
+
+    public static DifferentialDateDaysMatcher today() {
+
+        return new DifferentialDateDaysMatcher(0);
+    }
+
+    public static DifferentialDateDaysMatcher tomorrow(){
+
+        return new DifferentialDateDaysMatcher(1);
+    }
 }

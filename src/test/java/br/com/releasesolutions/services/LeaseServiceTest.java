@@ -19,6 +19,9 @@ import java.util.List;
 
 import static br.com.releasesolutions.matchers.CustomMatcher.is;
 import static br.com.releasesolutions.matchers.CustomMatcher.isMonday;
+import static br.com.releasesolutions.matchers.CustomMatcher.today;
+import static br.com.releasesolutions.matchers.CustomMatcher.todayWithDaysOfDifference;
+import static br.com.releasesolutions.matchers.CustomMatcher.tomorrow;
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
 import static br.com.releasesolutions.utils.DateUtils.isSameDate;
 import static java.util.Calendar.MONDAY;
@@ -71,6 +74,16 @@ public class LeaseServiceTest {
         }
     }
 
+    @Test(expected = MovieWithoutStockException.class)
+    public void test_shouldNotRentMovieWithoutStockUsingRule() throws Exception {
+
+        // Scenery
+        List<Movie> movies = List.of(new Movie("Movie 1", 0, 4.0));
+
+        // action
+        leaseService.leaseMovie(user, movies);
+    }
+
     @Test
     public void test_shouldRentMovieUsingRule2() throws Exception {
 
@@ -88,14 +101,61 @@ public class LeaseServiceTest {
         error.checkThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
     }
 
-    @Test(expected = MovieWithoutStockException.class)
-    public void test_shouldNotRentMovieWithoutStockUsingRule() throws Exception {
+    @Test
+    public void test_shouldRentMovieAndUsingRuleAndCustomMatchers() throws Exception {
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 0, 4.0));
+        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
+
+        // Action
+        Lease lease = leaseService.leaseMovie(user, movies);
+
+        // Verifications
+        // 4 + 4 = 8
+        error.checkThat(lease.getPrice(), is(equalTo(8.0)));
+        error.checkThat(lease.getLeaseDate(), today());
+        error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(1));
+    }
+
+    @Test
+    public void test_shouldRentMovieAndUsingRuleAndCustomMatchers2() throws Exception {
+
+        // Scenery
+        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
+
+        // Action
+        Lease lease = leaseService.leaseMovie(user, movies);
+
+        // Verifications
+        // 4 + 4 = 8
+        error.checkThat(lease.getPrice(), is(equalTo(8.0)));
+        error.checkThat(lease.getLeaseDate(), today());
+        error.checkThat(lease.getDeliveryDate(), tomorrow());
+    }
+
+    @Test
+    public void test_shouldRentMovieAndUsingCustomMatchers() {
+
+        // Scenery
+        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
 
         // action
-        leaseService.leaseMovie(user, movies);
+
+        try {
+            Lease lease = leaseService.leaseMovie(user, movies);
+
+            // verifications
+            assertThat(lease.getPrice(), is(equalTo(4.0)));
+            assertThat(lease.getLeaseDate(), today());
+            assertThat(lease.getDeliveryDate(), todayWithDaysOfDifference(1));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Should not throw exception.");
+        }
     }
 
     @Test
@@ -198,7 +258,7 @@ public class LeaseServiceTest {
     }
 
     @Test
-    public void test_shouldFreePercentOnMovieSix() throws RentalException, MovieWithoutStockException {
+    public void test_shouldLeaseForFreeOnMovieSix() throws RentalException, MovieWithoutStockException {
 
         // Scenery
         List<Movie> movies = List.of(
