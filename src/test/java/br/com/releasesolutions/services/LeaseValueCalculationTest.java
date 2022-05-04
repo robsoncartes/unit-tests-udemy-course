@@ -72,9 +72,4 @@ public class LeaseValueCalculationTest {
         // 4 + 4 + 3 + 2 + 1 = 14
         assertThat(lease.getPrice(), is(leasePrice));
     }
-
-    @Test
-    public void print() {
-        System.out.println(leasePrice);
-    }
 }
