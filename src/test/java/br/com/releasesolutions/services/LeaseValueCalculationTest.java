@@ -9,11 +9,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -21,7 +21,6 @@ import static org.junit.Assert.assertThat;
 public class LeaseValueCalculationTest {
 
     private LeaseService leaseService;
-    private User user;
 
     @Parameterized.Parameter
     public List<Movie> movies;
@@ -43,7 +42,7 @@ public class LeaseValueCalculationTest {
     @Before
     public void setup() {
 
-        user = new User("User 1");
+        // Common Scenery
         leaseService = new LeaseService();
 
     }
@@ -64,6 +63,9 @@ public class LeaseValueCalculationTest {
 
     @Test
     public void test_shouldCalculateLeaseValueConsideringDiscounts() throws RentalException, MovieWithoutStockException {
+
+        // Scenery
+        User user = getUserBuilderInstance().getUser();
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);

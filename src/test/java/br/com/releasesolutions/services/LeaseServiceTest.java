@@ -12,11 +12,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.com.releasesolutions.builders.MovieBuilder.getMovieBuilderInstance;
+import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static br.com.releasesolutions.matchers.CustomMatcher.is;
 import static br.com.releasesolutions.matchers.CustomMatcher.isMonday;
 import static br.com.releasesolutions.matchers.CustomMatcher.today;
@@ -35,7 +36,6 @@ import static org.junit.Assume.assumeTrue;
 public class LeaseServiceTest {
 
     private LeaseService leaseService;
-    private User user;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -48,7 +48,6 @@ public class LeaseServiceTest {
 
         // Common scenery
         leaseService = new LeaseService();
-        user = new User("User 1");
     }
 
     @Test
@@ -56,7 +55,8 @@ public class LeaseServiceTest {
 
         // Scenery
         assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getWithLeasePriceEqualsTo(5.0).getMovie());
 
         // action
 
@@ -64,7 +64,7 @@ public class LeaseServiceTest {
             Lease lease = leaseService.leaseMovie(user, movies);
 
             // verifications
-            assertThat(lease.getPrice(), is(equalTo(4.0)));
+            assertThat(lease.getPrice(), is(equalTo(5.0)));
             assertThat(isSameDate(lease.getLeaseDate(), new Date()), is(true));
             assertThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
 
@@ -78,7 +78,8 @@ public class LeaseServiceTest {
     public void test_shouldNotRentMovieWithoutStockUsingRule() throws Exception {
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 0, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getWithoutStock().getMovie());
 
         // action
         leaseService.leaseMovie(user, movies);
@@ -88,8 +89,13 @@ public class LeaseServiceTest {
     public void test_shouldRentMovieUsingRule2() throws Exception {
 
         // Scenery
+        User user = getUserBuilderInstance().getUser();
         assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
+
+        List<Movie> movies = List.of(
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie()
+        );
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -106,7 +112,12 @@ public class LeaseServiceTest {
 
         // Scenery
         assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
+        User user = getUserBuilderInstance().getUser();
+
+        List<Movie> movies = List.of(
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie()
+        );
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -123,7 +134,12 @@ public class LeaseServiceTest {
 
         // Scenery
         assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0), new Movie("Movie 2", 2, 4.0));
+        User user = getUserBuilderInstance().getUser();
+
+        List<Movie> movies = List.of(
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie()
+        );
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -140,7 +156,8 @@ public class LeaseServiceTest {
 
         // Scenery
         assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         // action
 
@@ -162,7 +179,8 @@ public class LeaseServiceTest {
     public void test_shouldNotRentMovieWithoutStock() throws Exception {
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 0, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getWithoutStock().getMovie());
 
         expectedException.expect(Exception.class);
 
@@ -176,7 +194,7 @@ public class LeaseServiceTest {
         // best form of implementation
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         // action
 
@@ -193,7 +211,7 @@ public class LeaseServiceTest {
     public void test_shouldNotRentMovieWithoutMovie() throws RentalException, MovieWithoutStockException {
 
         // Scenery
-
+        User user = getUserBuilderInstance().getUser();
         expectedException.expect(RentalException.class);
         expectedException.expectMessage("Movie null.");
 
@@ -205,10 +223,13 @@ public class LeaseServiceTest {
     public void test_shouldPay75PercentOnMovieThree() throws RentalException, MovieWithoutStockException {
 
         // Scenery
+        User user = getUserBuilderInstance().getUser();
+
         List<Movie> movies = List.of(
-                new Movie("Movie 1", 1, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 3, 4.0));
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie()
+        );
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -223,6 +244,7 @@ public class LeaseServiceTest {
     public void test_shouldPay50PercentOnMovieFour() throws RentalException, MovieWithoutStockException {
 
         // Scenery
+        User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(
                 new Movie("Movie 1", 1, 4.0),
                 new Movie("Movie 2", 2, 4.0),
@@ -242,12 +264,13 @@ public class LeaseServiceTest {
     public void test_shouldPay25PercentOnMovieFive() throws RentalException, MovieWithoutStockException {
 
         // Scenery
+        User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(
-                new Movie("Movie 1", 1, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 3, 4.0),
-                new Movie("Movie 4", 4, 4.0),
-                new Movie("Movie 5", 5, 4.0));
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie());
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -261,13 +284,16 @@ public class LeaseServiceTest {
     public void test_shouldLeaseForFreeOnMovieSix() throws RentalException, MovieWithoutStockException {
 
         // Scenery
+        User user = getUserBuilderInstance().getUser();
+
         List<Movie> movies = List.of(
-                new Movie("Movie 1", 1, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 3, 4.0),
-                new Movie("Movie 4", 4, 4.0),
-                new Movie("Movie 5", 5, 4.0),
-                new Movie("Movie 6", 6, 4.0));
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie(),
+                getMovieBuilderInstance().getMovie()
+        );
 
         // Action
         Lease lease = leaseService.leaseMovie(user, movies);
@@ -283,7 +309,8 @@ public class LeaseServiceTest {
         assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
@@ -298,7 +325,8 @@ public class LeaseServiceTest {
         assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
@@ -313,7 +341,8 @@ public class LeaseServiceTest {
         assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 
         // Scenery
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 4.0));
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
