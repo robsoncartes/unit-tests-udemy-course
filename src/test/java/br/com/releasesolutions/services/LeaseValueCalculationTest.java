@@ -1,5 +1,7 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.dao.FakeLeaseDAO;
+import br.com.releasesolutions.dao.LeaseDAO;
 import br.com.releasesolutions.exceptions.MovieWithoutStockException;
 import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
@@ -44,6 +46,8 @@ public class LeaseValueCalculationTest {
 
         // Common Scenery
         leaseService = new LeaseService();
+        LeaseDAO leaseDAO = new FakeLeaseDAO();
+        leaseService.setLeaseDAO(leaseDAO);
 
     }
 

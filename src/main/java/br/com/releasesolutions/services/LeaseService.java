@@ -7,7 +7,6 @@ import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
 import br.com.releasesolutions.utils.DateUtils;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,10 @@ import static br.com.releasesolutions.utils.DateUtils.addDays;
 public class LeaseService {
 
     private LeaseDAO leaseDAO;
+
+    public void setLeaseDAO(LeaseDAO leaseDAO) {
+        this.leaseDAO = leaseDAO;
+    }
 
     public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
 
