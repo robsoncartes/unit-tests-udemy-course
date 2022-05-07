@@ -60,4 +60,17 @@ public class CalculatorTest {
         // Action
         calculator.divide(a, denominator);
     }
+
+    @Test
+    public void test_shouldDivideNumeratorByDenominator() {
+
+        String a = "6";
+        String b = "3";
+
+        // Action
+        int result = calculator.divide(a, b);
+
+        // Verification
+        assertEquals(2, result);
+    }
 }
