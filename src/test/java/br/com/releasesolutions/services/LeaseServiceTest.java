@@ -1,6 +1,5 @@
 package br.com.releasesolutions.services;
 
-import br.com.releasesolutions.dao.FakeLeaseDAO;
 import br.com.releasesolutions.dao.LeaseDAO;
 import br.com.releasesolutions.exceptions.MovieWithoutStockException;
 import br.com.releasesolutions.exceptions.RentalException;
@@ -14,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +50,7 @@ public class LeaseServiceTest {
 
         // Common scenery
         leaseService = new LeaseService();
-        LeaseDAO leaseDAO = new FakeLeaseDAO();
+        LeaseDAO leaseDAO = Mockito.mock(LeaseDAO.class);
         leaseService.setLeaseDAO(leaseDAO);
     }
 
