@@ -1,5 +1,6 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.dao.LeaseDAO;
 import br.com.releasesolutions.exceptions.MovieWithoutStockException;
 import br.com.releasesolutions.exceptions.RentalException;
 import br.com.releasesolutions.models.Lease;
@@ -14,6 +15,8 @@ import java.util.List;
 import static br.com.releasesolutions.utils.DateUtils.addDays;
 
 public class LeaseService {
+
+    private LeaseDAO leaseDAO;
 
     public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
 
@@ -69,6 +72,9 @@ public class LeaseService {
             deliveryDate = addDays(deliveryDate, 1);
 
         lease.setDeliveryDate(deliveryDate);
+
+        // FIXME
+        leaseDAO.save(lease);
 
         return lease;
     }

@@ -61,6 +61,7 @@ public class LeaseServiceTest {
         // action
 
         try {
+            // FIXME
             Lease lease = leaseService.leaseMovie(user, movies);
 
             // verifications
@@ -69,6 +70,7 @@ public class LeaseServiceTest {
             assertThat(isSameDate(lease.getDeliveryDate(), getDateWithDaysDifference(1)), is(true));
 
         } catch (Exception e) {
+            // FIXME
             e.printStackTrace();
             fail("Should not throw exception.");
         }
@@ -98,6 +100,7 @@ public class LeaseServiceTest {
         );
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // Verifications
@@ -120,6 +123,7 @@ public class LeaseServiceTest {
         );
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // Verifications
@@ -142,6 +146,7 @@ public class LeaseServiceTest {
         );
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // Verifications
@@ -170,6 +175,7 @@ public class LeaseServiceTest {
             assertThat(lease.getDeliveryDate(), todayWithDaysOfDifference(1));
 
         } catch (Exception e) {
+            // FIXME
             e.printStackTrace();
             fail("Should not throw exception.");
         }
@@ -232,6 +238,7 @@ public class LeaseServiceTest {
         );
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // verification
@@ -252,6 +259,7 @@ public class LeaseServiceTest {
                 new Movie("Movie 4", 4, 4.0));
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // verification
@@ -273,6 +281,7 @@ public class LeaseServiceTest {
                 getMovieBuilderInstance().getMovie());
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // verification
@@ -296,6 +305,7 @@ public class LeaseServiceTest {
         );
 
         // Action
+        // FIXME
         Lease lease = leaseService.leaseMovie(user, movies);
 
         // verification
