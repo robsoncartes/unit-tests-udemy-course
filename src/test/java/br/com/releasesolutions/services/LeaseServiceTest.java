@@ -1,5 +1,6 @@
 package br.com.releasesolutions.services;
 
+import br.com.releasesolutions.builders.LeaseBuilder;
 import br.com.releasesolutions.dao.LeaseDAO;
 import br.com.releasesolutions.exceptions.MovieWithoutStockException;
 import br.com.releasesolutions.exceptions.RentalException;
@@ -13,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,12 +36,17 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class LeaseServiceTest {
 
     private LeaseService leaseService;
     private SPCService spcService;
+
+    private LeaseDAO leaseDAO;
+
+    private EmailService emailService;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -52,11 +59,13 @@ public class LeaseServiceTest {
 
         // Common scenery
         leaseService = new LeaseService();
-        LeaseDAO leaseDAO = mock(LeaseDAO.class);
+        leaseDAO = mock(LeaseDAO.class);
         spcService = mock(SPCService.class);
+        emailService = Mockito.mock(EmailService.class);
 
         leaseService.setLeaseDAO(leaseDAO);
         leaseService.setSpcService(spcService);
+        leaseService.setEmailService(emailService);
     }
 
     @Test
@@ -361,20 +370,44 @@ public class LeaseServiceTest {
     }
 
     @Test
-    public void test_shouldNotRentMovieForNegativedSPC() throws RentalException, MovieWithoutStockException {
+    public void test_shouldNotRentMovieForNegativedSPC() throws MovieWithoutStockException {
 
         // Scenery
         User user = getUserBuilderInstance().getUser();
-        // User user2 = getUserBuilderInstance().setName("User 2").getUser();
-
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
         when(spcService.hasNegative(user)).thenReturn(true);
 
-        expectedException.expect(RentalException.class);
-        expectedException.expectMessage("User negatived.");
+        // Action
+        try {
+            leaseService.leaseMovie(user, movies);
+            // Verification
+            fail();
+        } catch (RentalException e) {
+            assertThat(e.getMessage(), is("User negatived."));
+        }
+
+        verify(spcService).hasNegative(user);
+    }
+
+    @Test
+    public void test_shouldSendEmailForLateRentals() {
+
+        // Scenery
+        User user = getUserBuilderInstance().getUser();
+        List<Lease> leases = List.of(
+                LeaseBuilder
+                        .getLeaseBuilderInstance()
+                        .getLeaseWithUser(user)
+                        .getLeaseWithDeliveryDate(DateUtils.getDateWithDaysDifference(-2)).getLease()
+        );
+
+        when(leaseDAO.getPendingLeases()).thenReturn(leases);
 
         // Action
-        leaseService.leaseMovie(user, movies);
+        leaseService.notifyDelays();
+
+        // Verification
+        verify(emailService).notifyDelay(user);
     }
 }

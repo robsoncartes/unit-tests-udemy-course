@@ -18,12 +18,18 @@ public class LeaseService {
     private LeaseDAO leaseDAO;
     private SPCService spcService;
 
+    private EmailService emailService;
+
     public void setLeaseDAO(LeaseDAO leaseDAO) {
         this.leaseDAO = leaseDAO;
     }
 
     public void setSpcService(SPCService spcService) {
         this.spcService = spcService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
@@ -88,5 +94,14 @@ public class LeaseService {
         leaseDAO.save(lease);
 
         return lease;
+    }
+
+    public void notifyDelays() {
+
+        List<Lease> leases = leaseDAO.getPendingLeases();
+
+        for (Lease lease : leases) {
+            emailService.notifyDelay(lease.getUser());
+        }
     }
 }
