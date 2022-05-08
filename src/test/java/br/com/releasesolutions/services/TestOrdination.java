@@ -14,6 +14,7 @@ public class TestOrdination {
     @Test
     public void start() {
         counter = 1;
+        assertEquals(1, counter);
     }
 
     @Test

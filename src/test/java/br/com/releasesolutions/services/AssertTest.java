@@ -62,6 +62,7 @@ public class AssertTest {
     public void test_assertEquals() {
 
         int i = 5;
+        int a = 1;
         Integer j = 5;
 
         double k = 5.0;
@@ -71,12 +72,12 @@ public class AssertTest {
         User user2 = new User("User 1");
         User user3 = user2;
 
-        assertEquals(1, 1);
-        assertEquals(Math.round(5.6), 6);
+        assertEquals(1, a);
+        assertEquals(6, Math.round(5.6));
         assertEquals(i, j.intValue());
-        assertEquals(Integer.valueOf(i), j);
-        assertEquals(Double.valueOf(k), l);
-        assertEquals("Ball".toLowerCase(), "ball");
+        assertEquals(j, Integer.valueOf(i));
+        assertEquals(l, Double.valueOf(k));
+        assertEquals("ball", "Ball".toLowerCase());
 
         assertEquals(user1, user2);
         assertEquals("Optional message: values are not equals.", user2, user3);
@@ -102,12 +103,13 @@ public class AssertTest {
         double k = 5.0;
         Double l = 5.0;
 
-        assertEquals(1.1, 1.101, 0.001);
-        assertEquals(Math.PI, 3.14, 0.01);
-        assertEquals(Math.floor(5.5), 5.0, 0.0);
-        assertEquals(Math.round(5.6), 6.0, 0.0);
+        assertEquals(1.101, 1.1, 0.001);
+        assertEquals(3.14, Math.PI, 0.01);
+        assertEquals(5.0, Math.floor(5.5), 0.0);
+        assertEquals(5.0, Math.floor(5.5), 0.0);
+        assertEquals(6.0, Math.round(5.6), 0.0);
 
-        assertEquals("Optional message: values are not equals.", k, l.doubleValue(), 0);
+        assertEquals("Optional message: values are not equals.", l, k, 0);
 
     }
 

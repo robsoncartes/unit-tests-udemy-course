@@ -15,21 +15,15 @@ import static br.com.releasesolutions.utils.DateUtils.addDays;
 
 public class LeaseService {
 
-    private LeaseDAO leaseDAO;
-    private SPCService spcService;
+    private final LeaseDAO leaseDAO;
+    private final SPCService spcService;
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    public void setLeaseDAO(LeaseDAO leaseDAO) {
-        this.leaseDAO = leaseDAO;
-    }
-
-    public void setSpcService(SPCService spcService) {
-        this.spcService = spcService;
-    }
-
-    public void setEmailService(EmailService emailService) {
-        this.emailService = emailService;
+    public LeaseService(LeaseDAO dao, SPCService spc, EmailService email) {
+        this.leaseDAO = dao;
+        this.spcService = spc;
+        this.emailService = email;
     }
 
     public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
@@ -73,6 +67,8 @@ public class LeaseService {
                     break;
                 case 5:
                     moviePrice = moviePrice * 0.0;
+                    break;
+                default:
                     break;
             }
 

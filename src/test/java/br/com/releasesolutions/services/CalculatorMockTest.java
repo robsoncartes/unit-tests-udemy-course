@@ -2,6 +2,7 @@ package br.com.releasesolutions.services;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,6 +16,6 @@ public class CalculatorMockTest {
         Calculator calculator = mock(Calculator.class);
         when(calculator.sum(eq(1), anyInt())).thenReturn(5);
 
-        System.out.println(calculator.sum(1, 81));
+        assertEquals(5, calculator.sum(1, 3));
     }
 }
