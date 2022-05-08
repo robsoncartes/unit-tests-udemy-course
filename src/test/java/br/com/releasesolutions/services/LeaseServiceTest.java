@@ -13,7 +13,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +41,6 @@ import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,16 +50,19 @@ import static org.mockito.Mockito.when;
 
 public class LeaseServiceTest {
 
+    @InjectMocks
     private LeaseService leaseService;
+    @Mock
     private SPCService spcService;
-
+    @Mock
     private LeaseDAO leaseDAO;
-
+    @Mock
     private EmailService emailService;
 
+    @Rule //initMocks
+    public MockitoRule rule = MockitoJUnit.rule();
     @Rule
     public ErrorCollector error = new ErrorCollector();
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -65,14 +70,6 @@ public class LeaseServiceTest {
     public void setup() {
 
         // Common scenery
-        leaseService = new LeaseService();
-        leaseDAO = mock(LeaseDAO.class);
-        spcService = mock(SPCService.class);
-        emailService = Mockito.mock(EmailService.class);
-
-        leaseService.setLeaseDAO(leaseDAO);
-        leaseService.setSpcService(spcService);
-        leaseService.setEmailService(emailService);
     }
 
     @Test

@@ -7,9 +7,14 @@ import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -17,12 +22,21 @@ import java.util.List;
 import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class LeaseValueCalculationTest {
 
+    @InjectMocks
     private LeaseService leaseService;
+
+    @Rule //initMocks
+    public MockitoRule rule = MockitoJUnit.rule();
+
+    @Mock
+    private LeaseDAO leaseDAO;
+
+    @Mock
+    private SPCService spcService;
 
     @Parameterized.Parameter
     public List<Movie> movies;
@@ -45,12 +59,6 @@ public class LeaseValueCalculationTest {
     public void setup() {
 
         // Common Scenery
-        leaseService = new LeaseService();
-        LeaseDAO leaseDAO = mock(LeaseDAO.class);
-        SPCService spcService = mock(SPCService.class);
-
-        leaseService.setLeaseDAO(leaseDAO);
-        leaseService.setSpcService(spcService);
     }
 
     @Parameterized.Parameters(name = "Test {index} {2}")
