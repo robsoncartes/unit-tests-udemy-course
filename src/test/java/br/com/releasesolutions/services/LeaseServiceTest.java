@@ -13,7 +13,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +33,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LeaseServiceTest {
 
     private LeaseService leaseService;
+    private SPCService spcService;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -50,8 +52,11 @@ public class LeaseServiceTest {
 
         // Common scenery
         leaseService = new LeaseService();
-        LeaseDAO leaseDAO = Mockito.mock(LeaseDAO.class);
+        LeaseDAO leaseDAO = mock(LeaseDAO.class);
+        spcService = mock(SPCService.class);
+
         leaseService.setLeaseDAO(leaseDAO);
+        leaseService.setSpcService(spcService);
     }
 
     @Test
@@ -353,5 +358,23 @@ public class LeaseServiceTest {
 
         // Verification
         assertThat(delivery.getDeliveryDate(), isMonday());
+    }
+
+    @Test
+    public void test_shouldNotRentMovieForNegativedSPC() throws RentalException, MovieWithoutStockException {
+
+        // Scenery
+        User user = getUserBuilderInstance().getUser();
+        // User user2 = getUserBuilderInstance().setName("User 2").getUser();
+
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+
+        when(spcService.hasNegative(user)).thenReturn(true);
+
+        expectedException.expect(RentalException.class);
+        expectedException.expectMessage("User negatived.");
+
+        // Action
+        leaseService.leaseMovie(user, movies);
     }
 }

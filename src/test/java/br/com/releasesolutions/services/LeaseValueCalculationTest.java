@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.List;
 import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class LeaseValueCalculationTest {
@@ -46,9 +46,11 @@ public class LeaseValueCalculationTest {
 
         // Common Scenery
         leaseService = new LeaseService();
-        LeaseDAO leaseDAO = Mockito.mock(LeaseDAO.class);
-        leaseService.setLeaseDAO(leaseDAO);
+        LeaseDAO leaseDAO = mock(LeaseDAO.class);
+        SPCService spcService = mock(SPCService.class);
 
+        leaseService.setLeaseDAO(leaseDAO);
+        leaseService.setSpcService(spcService);
     }
 
     @Parameterized.Parameters(name = "Test {index} {2}")

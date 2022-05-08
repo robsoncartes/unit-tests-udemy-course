@@ -19,6 +19,13 @@ public class UserBuilder {
         return builder;
     }
 
+    public UserBuilder setName(String name) {
+
+        user.setName(name);
+
+        return this;
+    }
+
     public User getUser() {
 
         return user;

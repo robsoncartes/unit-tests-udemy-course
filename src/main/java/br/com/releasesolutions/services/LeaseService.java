@@ -16,9 +16,14 @@ import static br.com.releasesolutions.utils.DateUtils.addDays;
 public class LeaseService {
 
     private LeaseDAO leaseDAO;
+    private SPCService spcService;
 
     public void setLeaseDAO(LeaseDAO leaseDAO) {
         this.leaseDAO = leaseDAO;
+    }
+
+    public void setSpcService(SPCService spcService) {
+        this.spcService = spcService;
     }
 
     public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
@@ -32,6 +37,10 @@ public class LeaseService {
         for (Movie movie : movies) {
             if (movie.getStock() == 0)
                 throw new MovieWithoutStockException();
+        }
+
+        if (spcService.hasNegative(user)) {
+            throw new RentalException("User negatived.");
         }
 
 
@@ -76,7 +85,6 @@ public class LeaseService {
 
         lease.setDeliveryDate(deliveryDate);
 
-        // FIXME
         leaseDAO.save(lease);
 
         return lease;
