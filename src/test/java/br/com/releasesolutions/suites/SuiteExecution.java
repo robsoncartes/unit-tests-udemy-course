@@ -1,6 +1,7 @@
 package br.com.releasesolutions.suites;
 
 import br.com.releasesolutions.services.AssertTest;
+import br.com.releasesolutions.services.CalculatorMockTest;
 import br.com.releasesolutions.services.CalculatorTest;
 import br.com.releasesolutions.services.LeaseServiceTest;
 import br.com.releasesolutions.services.LeaseValueCalculationTest;
@@ -14,6 +15,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         AssertTest.class,
         CalculatorTest.class,
+        CalculatorMockTest.class,
         LeaseServiceTest.class,
         LeaseValueCalculationTest.class,
         TestOrdination.class

@@ -101,7 +101,9 @@ public class LeaseService {
         List<Lease> leases = leaseDAO.getPendingLeases();
 
         for (Lease lease : leases) {
-            emailService.notifyDelay(lease.getUser());
+            if (lease.getDeliveryDate().before(new Date())) {
+                emailService.notifyDelay(lease.getUser());
+            }
         }
     }
 }

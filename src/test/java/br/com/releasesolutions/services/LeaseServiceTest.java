@@ -1,6 +1,5 @@
 package br.com.releasesolutions.services;
 
-import br.com.releasesolutions.builders.LeaseBuilder;
 import br.com.releasesolutions.dao.LeaseDAO;
 import br.com.releasesolutions.exceptions.MovieWithoutStockException;
 import br.com.releasesolutions.exceptions.RentalException;
@@ -19,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.com.releasesolutions.builders.LeaseBuilder.getLeaseBuilderInstance;
 import static br.com.releasesolutions.builders.MovieBuilder.getMovieBuilderInstance;
 import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static br.com.releasesolutions.matchers.CustomMatcher.is;
@@ -35,8 +35,15 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class LeaseServiceTest {
@@ -394,12 +401,14 @@ public class LeaseServiceTest {
     public void test_shouldSendEmailForLateRentals() {
 
         // Scenery
-        User user = getUserBuilderInstance().getUser();
+        User user1 = getUserBuilderInstance().getUser();
+        User user2 = getUserBuilderInstance().setName("User 2 - Lease Not Delayed").getUser();
+        User user3 = getUserBuilderInstance().setName("User 3 - Lease Delayed").getUser();
         List<Lease> leases = List.of(
-                LeaseBuilder
-                        .getLeaseBuilderInstance()
-                        .getLeaseWithUser(user)
-                        .getLeaseWithDeliveryDate(DateUtils.getDateWithDaysDifference(-2)).getLease()
+                // getLeaseBuilderInstance().getLeaseWithUser(user1).getLease(),
+                getLeaseBuilderInstance().delay().getLeaseWithUser(user1).getLease(),
+                getLeaseBuilderInstance().delay().getLeaseWithUser(user3).getLease(),
+                getLeaseBuilderInstance().delay().getLeaseWithUser(user3).getLease()
         );
 
         when(leaseDAO.getPendingLeases()).thenReturn(leases);
@@ -408,6 +417,11 @@ public class LeaseServiceTest {
         leaseService.notifyDelays();
 
         // Verification
-        verify(emailService).notifyDelay(user);
+        verify(emailService, times(3)).notifyDelay(any(User.class));
+        verify(emailService, atMostOnce()).notifyDelay(user1);
+        verify(emailService, atLeast(2)).notifyDelay(user3);
+        verify(emailService, never()).notifyDelay(user2);
+        verifyNoMoreInteractions(emailService);
+        verifyNoInteractions(spcService);
     }
 }
