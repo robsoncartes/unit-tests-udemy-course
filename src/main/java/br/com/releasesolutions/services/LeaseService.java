@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import static br.com.releasesolutions.utils.DateUtils.addDays;
+import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
 
 public class LeaseService {
 
@@ -109,5 +110,17 @@ public class LeaseService {
                 emailService.notifyDelay(lease.getUser());
             }
         }
+    }
+
+    public void extendLease(Lease lease, int days) {
+
+        Lease newLease = new Lease();
+        newLease.setUser(lease.getUser());
+        newLease.setMovies(lease.getMovies());
+        newLease.setLeaseDate(new Date());
+        newLease.setDeliveryDate(getDateWithDaysDifference(days));
+        newLease.setPrice(lease.getPrice() * days);
+
+        leaseDAO.save(newLease);
     }
 }

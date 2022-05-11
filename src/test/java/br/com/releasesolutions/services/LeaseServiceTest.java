@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
@@ -439,5 +440,25 @@ public class LeaseServiceTest {
         // Action
         leaseService.leaseMovie(user, movies);
 
+    }
+
+    @Test
+    public void test_shouldExtendALease() {
+
+        // Scenery
+        Lease lease = getLeaseBuilderInstance().getLease();
+
+
+        // Action
+        leaseService.extendLease(lease, 3);
+
+        // Verification
+        ArgumentCaptor<Lease> argCapt = ArgumentCaptor.forClass(Lease.class);
+        verify(leaseDAO).save(argCapt.capture());
+        Lease leaseReturned = argCapt.getValue();
+
+        error.checkThat(leaseReturned.getPrice(), is(12.0));
+        error.checkThat(leaseReturned.getLeaseDate(), today());
+        error.checkThat(leaseReturned.getDeliveryDate(), todayWithDaysOfDifference(3));
     }
 }
