@@ -1,15 +1,40 @@
 package br.com.releasesolutions.services;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CalculatorMockTest {
+
+    @Mock
+    private Calculator calculatorMock;
+
+    @Spy
+    private Calculator calculatorSpy;
+
+    @Spy
+    private EmailService emailService;
+
+    @Rule //initMocks
+    public MockitoRule rule = MockitoJUnit.rule();
+
+    @Before
+    public void setUp() {
+
+    }
 
     @Test
     public void test() {
@@ -29,6 +54,28 @@ public class CalculatorMockTest {
         when(calculator.sum(argCapt.capture(), argCapt.capture())).thenReturn(5);
 
         assertEquals(5, calculator.sum(-199, 42));
-        System.out.println(argCapt.getAllValues());
+        // System.out.println(argCapt.getAllValues());
+    }
+
+    @Test
+    public void test_shouldDemonstrateTheDifferenceBetweenMockAndSpy() {
+
+        // when(calculatorMock.sum(1, 2)).thenReturn(8);
+        when(calculatorMock.sum(1, 2)).thenCallRealMethod();
+        when(calculatorSpy.sum(1, 3)).thenReturn(8);
+
+        System.out.println("Mock: " + calculatorMock.sum(1, 2));
+        System.out.println("Spy: " + calculatorSpy.sum(1, 2));
+
+        System.out.println("Mock");
+        calculatorMock.printSomething();
+
+        System.out.println("Spy");
+        calculatorSpy.printSomething();
+
+        doNothing().when(calculatorSpy).printSomething();
+        calculatorSpy.printSomething();
+
+        doReturn(5).when(calculatorSpy).sum(1, 2);
     }
 }
