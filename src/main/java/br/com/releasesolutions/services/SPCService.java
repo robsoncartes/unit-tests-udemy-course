@@ -4,5 +4,5 @@ import br.com.releasesolutions.models.User;
 
 public interface SPCService {
 
-    boolean hasNegative(User user);
+    boolean hasNegative(User user) throws Exception;
 }

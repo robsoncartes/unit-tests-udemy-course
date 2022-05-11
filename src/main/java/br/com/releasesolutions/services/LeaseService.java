@@ -39,7 +39,15 @@ public class LeaseService {
                 throw new MovieWithoutStockException();
         }
 
-        if (spcService.hasNegative(user)) {
+        boolean isNegatived;
+
+        try {
+            isNegatived = spcService.hasNegative(user);
+        } catch (Exception e) {
+            throw new RentalException("SPC service is unavailable. Try again!");
+        }
+
+        if (isNegatived) {
             throw new RentalException("User negatived.");
         }
 

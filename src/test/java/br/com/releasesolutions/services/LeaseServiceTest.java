@@ -374,7 +374,7 @@ public class LeaseServiceTest {
     }
 
     @Test
-    public void test_shouldNotRentMovieForNegativedSPC() throws MovieWithoutStockException {
+    public void test_shouldNotRentMovieForNegativedSPC() throws Exception {
 
         // Scenery
         User user = getUserBuilderInstance().getUser();
@@ -420,5 +420,24 @@ public class LeaseServiceTest {
         verify(emailService, never()).notifyDelay(user2);
         verifyNoMoreInteractions(emailService);
         verifyNoInteractions(spcService);
+    }
+
+    @Test
+    public void test_shouldHandleErrorsOnSPC() throws Exception {
+
+        // Scenery
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+
+        // when(spcService.hasNegative(user)).thenThrow(new Exception("Catastrophic failure."));
+        when(spcService.hasNegative(user)).thenThrow(new Exception("Catastrophic failure."));
+
+        // Verification
+        expectedException.expect(RentalException.class);
+        expectedException.expectMessage("SPC service is unavailable. Try again!");
+
+        // Action
+        leaseService.leaseMovie(user, movies);
+
     }
 }
