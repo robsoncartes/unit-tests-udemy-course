@@ -13,11 +13,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,29 +30,33 @@ import static br.com.releasesolutions.builders.LeaseBuilder.getLeaseBuilderInsta
 import static br.com.releasesolutions.builders.MovieBuilder.getMovieBuilderInstance;
 import static br.com.releasesolutions.builders.UserBuilder.getUserBuilderInstance;
 import static br.com.releasesolutions.matchers.CustomMatcher.is;
-import static br.com.releasesolutions.matchers.CustomMatcher.isMonday;
+import static br.com.releasesolutions.matchers.CustomMatcher.isSaturday;
 import static br.com.releasesolutions.matchers.CustomMatcher.today;
 import static br.com.releasesolutions.matchers.CustomMatcher.todayWithDaysOfDifference;
 import static br.com.releasesolutions.matchers.CustomMatcher.tomorrow;
+import static br.com.releasesolutions.utils.DateUtils.getDate;
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
 import static br.com.releasesolutions.utils.DateUtils.isSameDate;
-import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.verifyNew;
+import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LeaseService.class, DateUtils.class})
 public class LeaseServiceTest {
 
     @InjectMocks
@@ -134,8 +142,9 @@ public class LeaseServiceTest {
     public void test_shouldRentMovieAndUsingRuleAndCustomMatchers() throws Exception {
 
         // Scenery
-        assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+        // assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
         User user = getUserBuilderInstance().getUser();
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(21, 5, 2022));
 
         List<Movie> movies = List.of(
                 getMovieBuilderInstance().getMovie(),
@@ -149,7 +158,9 @@ public class LeaseServiceTest {
         // 4 + 4 = 8
         error.checkThat(lease.getPrice(), is(equalTo(8.0)));
         error.checkThat(lease.getLeaseDate(), today());
-        error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(1));
+        error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(2));
+        error.checkThat(isSameDate(lease.getLeaseDate(), getDate(21, 5, 2022)), is(true));
+        error.checkThat(isSameDate(lease.getDeliveryDate(), getDate(23, 5, 2022)), is(true));
     }
 
     @Test
@@ -327,51 +338,52 @@ public class LeaseServiceTest {
     }
 
     @Test
-    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_1() throws RentalException, MovieWithoutStockException {
+    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_1() throws Exception {
 
-        assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+        // assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
 
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
 
         // Verification
-        assertThat(delivery.getDeliveryDate(), new DayOfWeekMatcher(Calendar.MONDAY));
+        assertThat(delivery.getDeliveryDate(), new DayOfWeekMatcher(Calendar.SATURDAY));
     }
 
     @Test
-    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_2() throws RentalException, MovieWithoutStockException {
-
-        assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_2() throws Exception {
 
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
 
         // Verification
-        assertThat(delivery.getDeliveryDate(), is(MONDAY));
+        assertThat(delivery.getDeliveryDate(), is(SATURDAY));
+        verifyNew(Date.class, times(2)).withNoArguments();
     }
 
     @Test
-    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_3() throws RentalException, MovieWithoutStockException {
-
-        assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
+    public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_3() throws Exception {
 
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
 
         // Verification
-        assertThat(delivery.getDeliveryDate(), isMonday());
+        assertThat(delivery.getDeliveryDate(), isSaturday());
     }
 
     @Test
@@ -416,11 +428,12 @@ public class LeaseServiceTest {
 
         // Verification
         verify(emailService, times(3)).notifyDelay(any(User.class));
-        verify(emailService, atMostOnce()).notifyDelay(user1);
+        verify(emailService, atMost(3)).notifyDelay(user1);
         verify(emailService, atLeast(2)).notifyDelay(user3);
         verify(emailService, never()).notifyDelay(user2);
         verifyNoMoreInteractions(emailService);
-        verifyNoInteractions(spcService);
+        // verifyNoInteractions(spcService);
+        verifyZeroInteractions(spcService);
     }
 
     @Test
@@ -430,7 +443,6 @@ public class LeaseServiceTest {
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
-        // when(spcService.hasNegative(user)).thenThrow(new Exception("Catastrophic failure."));
         when(spcService.hasNegative(user)).thenThrow(new Exception("Catastrophic failure."));
 
         // Verification

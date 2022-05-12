@@ -14,6 +14,11 @@ public class CustomMatcher {
         return new DayOfWeekMatcher(Calendar.MONDAY);
     }
 
+    public static DayOfWeekMatcher isSaturday() {
+
+        return new DayOfWeekMatcher(Calendar.SATURDAY);
+    }
+
     public static DifferentialDateDaysMatcher todayWithDaysOfDifference(Integer qttDays) {
 
         return new DifferentialDateDaysMatcher(qttDays);
@@ -24,7 +29,7 @@ public class CustomMatcher {
         return new DifferentialDateDaysMatcher(0);
     }
 
-    public static DifferentialDateDaysMatcher tomorrow(){
+    public static DifferentialDateDaysMatcher tomorrow() {
 
         return new DifferentialDateDaysMatcher(1);
     }

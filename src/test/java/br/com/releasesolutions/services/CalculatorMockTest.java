@@ -25,9 +25,6 @@ public class CalculatorMockTest {
     @Spy
     private Calculator calculatorSpy;
 
-    @Spy
-    private EmailService emailService;
-
     @Rule //initMocks
     public MockitoRule rule = MockitoJUnit.rule();
 
@@ -54,13 +51,11 @@ public class CalculatorMockTest {
         when(calculator.sum(argCapt.capture(), argCapt.capture())).thenReturn(5);
 
         assertEquals(5, calculator.sum(-199, 42));
-        // System.out.println(argCapt.getAllValues());
     }
 
     @Test
     public void test_shouldDemonstrateTheDifferenceBetweenMockAndSpy() {
 
-        // when(calculatorMock.sum(1, 2)).thenReturn(8);
         when(calculatorMock.sum(1, 2)).thenCallRealMethod();
         when(calculatorSpy.sum(1, 3)).thenReturn(8);
 
