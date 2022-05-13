@@ -22,6 +22,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -147,9 +148,8 @@ public class LeaseServiceTest {
     public void test_shouldRentMovieAndUsingRuleAndCustomMatchers() throws Exception {
 
         // Scenery
-        // assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
         User user = getUserBuilderInstance().getUser();
-        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(21, 5, 2022));
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(DAY_OF_MONTH, 21);
         calendar.set(MONTH, MAY);
@@ -168,8 +168,6 @@ public class LeaseServiceTest {
         // Verifications
         // 4 + 4 = 8
         error.checkThat(lease.getPrice(), is(equalTo(8.0)));
-        // error.checkThat(lease.getLeaseDate(), today());
-        // error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(2));
         error.checkThat(isSameDate(lease.getLeaseDate(), getDate(21, 5, 2022)), is(true));
         error.checkThat(isSameDate(lease.getDeliveryDate(), getDate(23, 5, 2022)), is(true));
     }
@@ -351,13 +349,10 @@ public class LeaseServiceTest {
     @Test
     public void test_shouldDeliveryMovieOnMondayIfMovieIsLeaseOnSaturday_1() throws Exception {
 
-        // assumeTrue(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
-
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
-        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
         Calendar calendar = Calendar.getInstance();
         calendar.set(DAY_OF_MONTH, 13);
         calendar.set(MONTH, MAY);
@@ -378,7 +373,7 @@ public class LeaseServiceTest {
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
-        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(DAY_OF_MONTH, 13);
         calendar.set(MONTH, MAY);
@@ -391,7 +386,6 @@ public class LeaseServiceTest {
 
         // Verification
         assertThat(delivery.getDeliveryDate(), is(SATURDAY));
-        // verifyNew(Date.class, times(2)).withNoArguments();
 
         PowerMockito.verifyStatic(Calendar.class, times(2));
         Calendar.getInstance();
@@ -403,7 +397,7 @@ public class LeaseServiceTest {
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
-        // owerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(DAY_OF_MONTH, 13);
         calendar.set(MONTH, MAY);
@@ -447,7 +441,6 @@ public class LeaseServiceTest {
         User user2 = getUserBuilderInstance().setName("User 2 - Lease Not Delayed").getUser();
         User user3 = getUserBuilderInstance().setName("User 3 - Lease Delayed").getUser();
         List<Lease> leases = List.of(
-                // getLeaseBuilderInstance().getLeaseWithUser(user1).getLease(),
                 getLeaseBuilderInstance().delay().getLeaseWithUser(user1).getLease(),
                 getLeaseBuilderInstance().delay().getLeaseWithUser(user3).getLease(),
                 getLeaseBuilderInstance().delay().getLeaseWithUser(user3).getLease()
@@ -464,7 +457,6 @@ public class LeaseServiceTest {
         verify(emailService, atLeast(2)).notifyDelay(user3);
         verify(emailService, never()).notifyDelay(user2);
         verifyNoMoreInteractions(emailService);
-        // verifyNoInteractions(spcService);
         verifyZeroInteractions(spcService);
     }
 
@@ -522,4 +514,18 @@ public class LeaseServiceTest {
         assertThat(lease.getPrice(), is(1.0));
         PowerMockito.verifyPrivate(leaseService).invoke("getTotalPrice", movies);
     }
+
+    @Test
+    public void test_shouldCalculatingPrice() throws Exception {
+
+        // Scenery
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+
+        // Action
+        Double price = Whitebox.invokeMethod(leaseService, "getTotalPrice", movies);
+
+        // Verification
+        assertThat(price, is(4.0));
+    }
+
 }
