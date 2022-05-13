@@ -28,36 +28,7 @@ public class LeaseService {
         this.emailService = email;
     }
 
-    public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
-
-        if (user == null)
-            throw new RentalException("User null.");
-
-        if (movies == null || movies.isEmpty())
-            throw new RentalException("Movie null.");
-
-        for (Movie movie : movies) {
-            if (movie.getStock() == 0)
-                throw new MovieWithoutStockException();
-        }
-
-        boolean isNegatived;
-
-        try {
-            isNegatived = spcService.hasNegative(user);
-        } catch (Exception e) {
-            throw new RentalException("SPC service is unavailable. Try again!");
-        }
-
-        if (isNegatived) {
-            throw new RentalException("User negatived.");
-        }
-
-
-        Lease lease = new Lease();
-        lease.setMovies(movies);
-        lease.setUser(user);
-        lease.setLeaseDate(getInstance().getTime());
+    private Double getTotalPrice(List<Movie> movies) {
 
         Double totalPrice = 0d;
 
@@ -84,8 +55,39 @@ public class LeaseService {
 
             totalPrice += moviePrice;
         }
+        return totalPrice;
+    }
 
-        lease.setPrice(totalPrice);
+    public Lease leaseMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
+
+        if (user == null)
+            throw new RentalException("User null.");
+
+        if (movies == null || movies.isEmpty())
+            throw new RentalException("Movie null.");
+
+        for (Movie movie : movies) {
+            if (movie.getStock() == 0)
+                throw new MovieWithoutStockException();
+        }
+
+        boolean isNegatived;
+
+        try {
+            isNegatived = spcService.hasNegative(user);
+        } catch (Exception e) {
+            throw new RentalException("SPC service is unavailable. Try again!");
+        }
+
+        if (isNegatived) {
+            throw new RentalException("User negatived.");
+        }
+
+        Lease lease = new Lease();
+        lease.setMovies(movies);
+        lease.setUser(user);
+        lease.setLeaseDate(getInstance().getTime());
+        lease.setPrice(getTotalPrice(movies));
 
         Date deliveryDate = getInstance().getTime();
         deliveryDate = addDays(deliveryDate, 1);
@@ -101,6 +103,7 @@ public class LeaseService {
 
         return lease;
     }
+
 
     public void notifyDelays() {
 
