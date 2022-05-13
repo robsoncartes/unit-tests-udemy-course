@@ -37,7 +37,12 @@ import static br.com.releasesolutions.matchers.CustomMatcher.tomorrow;
 import static br.com.releasesolutions.utils.DateUtils.getDate;
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
 import static br.com.releasesolutions.utils.DateUtils.isSameDate;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MAY;
+import static java.util.Calendar.MONTH;
 import static java.util.Calendar.SATURDAY;
+import static java.util.Calendar.YEAR;
+import static java.util.Calendar.getInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -51,12 +56,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.verifyNew;
 import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LeaseService.class, DateUtils.class})
+@PrepareForTest({LeaseService.class})
 public class LeaseServiceTest {
 
     @InjectMocks
@@ -144,7 +148,13 @@ public class LeaseServiceTest {
         // Scenery
         // assumeFalse(DateUtils.checkDayOfWeek(new Date(), Calendar.SATURDAY));
         User user = getUserBuilderInstance().getUser();
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(21, 5, 2022));
+        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(21, 5, 2022));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(DAY_OF_MONTH, 21);
+        calendar.set(MONTH, MAY);
+        calendar.set(YEAR, 2022);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(getInstance()).thenReturn(calendar);
 
         List<Movie> movies = List.of(
                 getMovieBuilderInstance().getMovie(),
@@ -157,8 +167,8 @@ public class LeaseServiceTest {
         // Verifications
         // 4 + 4 = 8
         error.checkThat(lease.getPrice(), is(equalTo(8.0)));
-        error.checkThat(lease.getLeaseDate(), today());
-        error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(2));
+        // error.checkThat(lease.getLeaseDate(), today());
+        // error.checkThat(lease.getDeliveryDate(), todayWithDaysOfDifference(2));
         error.checkThat(isSameDate(lease.getLeaseDate(), getDate(21, 5, 2022)), is(true));
         error.checkThat(isSameDate(lease.getDeliveryDate(), getDate(23, 5, 2022)), is(true));
     }
@@ -346,7 +356,13 @@ public class LeaseServiceTest {
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
 
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(DAY_OF_MONTH, 13);
+        calendar.set(MONTH, MAY);
+        calendar.set(YEAR, 2022);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(getInstance()).thenReturn(calendar);
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
@@ -361,14 +377,23 @@ public class LeaseServiceTest {
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        // PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(DAY_OF_MONTH, 13);
+        calendar.set(MONTH, MAY);
+        calendar.set(YEAR, 2022);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(getInstance()).thenReturn(calendar);
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);
 
         // Verification
         assertThat(delivery.getDeliveryDate(), is(SATURDAY));
-        verifyNew(Date.class, times(2)).withNoArguments();
+        // verifyNew(Date.class, times(2)).withNoArguments();
+
+        PowerMockito.verifyStatic(Calendar.class, times(2));
+        Calendar.getInstance();
     }
 
     @Test
@@ -377,7 +402,13 @@ public class LeaseServiceTest {
         // Scenery
         User user = getUserBuilderInstance().getUser();
         List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        // owerMockito.whenNew(Date.class).withNoArguments().thenReturn(getDate(13, 5, 2022));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(DAY_OF_MONTH, 13);
+        calendar.set(MONTH, MAY);
+        calendar.set(YEAR, 2022);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(getInstance()).thenReturn(calendar);
 
         // Action
         Lease delivery = leaseService.leaseMovie(user, movies);

@@ -13,6 +13,7 @@ import java.util.List;
 
 import static br.com.releasesolutions.utils.DateUtils.addDays;
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
+import static java.util.Calendar.getInstance;
 
 public class LeaseService {
 
@@ -56,7 +57,7 @@ public class LeaseService {
         Lease lease = new Lease();
         lease.setMovies(movies);
         lease.setUser(user);
-        lease.setLeaseDate(new Date());
+        lease.setLeaseDate(getInstance().getTime());
 
         Double totalPrice = 0d;
 
@@ -86,7 +87,7 @@ public class LeaseService {
 
         lease.setPrice(totalPrice);
 
-        Date deliveryDate = new Date();
+        Date deliveryDate = getInstance().getTime();
         deliveryDate = addDays(deliveryDate, 1);
 
         boolean isSunday = DateUtils.checkDayOfWeek(deliveryDate, Calendar.SUNDAY);
