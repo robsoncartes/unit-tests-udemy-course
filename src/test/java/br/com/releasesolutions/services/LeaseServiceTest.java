@@ -83,6 +83,7 @@ public class LeaseServiceTest {
     public void setup() {
 
         // Common scenery
+        leaseService = PowerMockito.spy(leaseService);
     }
 
     @Test
@@ -503,5 +504,22 @@ public class LeaseServiceTest {
         error.checkThat(leaseReturned.getPrice(), is(12.0));
         error.checkThat(leaseReturned.getLeaseDate(), today());
         error.checkThat(leaseReturned.getDeliveryDate(), todayWithDaysOfDifference(3));
+    }
+
+    @Test
+    public void test_shouldRentMovieWithoutCalculatingPrice() throws Exception {
+
+        // Scenery
+        User user = getUserBuilderInstance().getUser();
+        List<Movie> movies = List.of(getMovieBuilderInstance().getMovie());
+
+        PowerMockito.doReturn(1.0).when(leaseService, "getTotalPrice", movies);
+
+        // Action
+        Lease lease = leaseService.leaseMovie(user, movies);
+
+        // Verification
+        assertThat(lease.getPrice(), is(1.0));
+        PowerMockito.verifyPrivate(leaseService).invoke("getTotalPrice", movies);
     }
 }
