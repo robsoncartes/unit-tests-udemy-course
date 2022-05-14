@@ -4,6 +4,7 @@ import br.com.releasesolutions.services.AssertTest;
 import br.com.releasesolutions.services.CalculatorMockTest;
 import br.com.releasesolutions.services.CalculatorTest;
 import br.com.releasesolutions.services.LeaseServiceTest;
+import br.com.releasesolutions.services.LeaseServiceWithPowerMockTest;
 import br.com.releasesolutions.services.LeaseValueCalculationTest;
 import br.com.releasesolutions.services.TestOrdination;
 import org.junit.AfterClass;
@@ -17,6 +18,7 @@ import org.junit.runners.Suite;
         CalculatorTest.class,
         CalculatorMockTest.class,
         LeaseServiceTest.class,
+        LeaseServiceWithPowerMockTest.class,
         LeaseValueCalculationTest.class,
         TestOrdination.class
 })

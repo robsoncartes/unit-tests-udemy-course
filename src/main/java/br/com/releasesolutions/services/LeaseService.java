@@ -13,7 +13,6 @@ import java.util.List;
 
 import static br.com.releasesolutions.utils.DateUtils.addDays;
 import static br.com.releasesolutions.utils.DateUtils.getDateWithDaysDifference;
-import static java.util.Calendar.getInstance;
 
 public class LeaseService {
 
@@ -86,10 +85,10 @@ public class LeaseService {
         Lease lease = new Lease();
         lease.setMovies(movies);
         lease.setUser(user);
-        lease.setLeaseDate(getInstance().getTime());
+        lease.setLeaseDate(getDate());
         lease.setPrice(getTotalPrice(movies));
 
-        Date deliveryDate = getInstance().getTime();
+        Date deliveryDate = getDate();
         deliveryDate = addDays(deliveryDate, 1);
 
         boolean isSunday = DateUtils.checkDayOfWeek(deliveryDate, Calendar.SUNDAY);
@@ -104,13 +103,17 @@ public class LeaseService {
         return lease;
     }
 
+    protected Date getDate() {
+        return new Date();
+    }
+
 
     public void notifyDelays() {
 
         List<Lease> leases = leaseDAO.getPendingLeases();
 
         for (Lease lease : leases) {
-            if (lease.getDeliveryDate().before(new Date())) {
+            if (lease.getDeliveryDate().before(getDate())) {
                 emailService.notifyDelay(lease.getUser());
             }
         }
@@ -121,7 +124,7 @@ public class LeaseService {
         Lease newLease = new Lease();
         newLease.setUser(lease.getUser());
         newLease.setMovies(lease.getMovies());
-        newLease.setLeaseDate(new Date());
+        newLease.setLeaseDate(getDate());
         newLease.setDeliveryDate(getDateWithDaysDifference(days));
         newLease.setPrice(lease.getPrice() * days);
 
