@@ -58,14 +58,7 @@ public class CalculatorMockTest {
 
         when(calculatorMock.sum(1, 2)).thenCallRealMethod();
         when(calculatorSpy.sum(1, 3)).thenReturn(8);
-
-        System.out.println("Mock: " + calculatorMock.sum(1, 2));
-        System.out.println("Spy: " + calculatorSpy.sum(1, 2));
-
-        System.out.println("Mock");
         calculatorMock.printSomething();
-
-        System.out.println("Spy");
         calculatorSpy.printSomething();
 
         doNothing().when(calculatorSpy).printSomething();

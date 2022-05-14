@@ -23,13 +23,6 @@ public class CalculatorTest {
         a = 5;
         b = 3;
         calculator = new Calculator();
-        System.out.println("Starting...");
-    }
-
-    @After
-    public void tearDown() {
-
-        System.out.println("Finishing...");
     }
 
     @Test

@@ -80,13 +80,6 @@ public class LeaseServiceTest {
     public void setup() {
 
         // Common scenery
-        System.err.println("Starting 2...");
-    }
-
-    @After
-    public void teardDown() {
-
-        System.err.println("Finishing 2...");
     }
 
     @Test

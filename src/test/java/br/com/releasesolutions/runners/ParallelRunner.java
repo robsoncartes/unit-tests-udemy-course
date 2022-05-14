@@ -24,7 +24,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         private final ExecutorService executorService;
 
         public ThreadPoll() {
-            this.executorService = Executors.newFixedThreadPool(50);
+            this.executorService = Executors.newFixedThreadPool(8);
         }
 
         @Override
