@@ -1,11 +1,15 @@
 package br.com.releasesolutions.services;
 
 import br.com.releasesolutions.exceptions.DivideByZeroException;
+import br.com.releasesolutions.runners.ParallelRunner;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(ParallelRunner.class)
 public class CalculatorTest {
 
     private Calculator calculator;
@@ -19,6 +23,13 @@ public class CalculatorTest {
         a = 5;
         b = 3;
         calculator = new Calculator();
+        System.out.println("Starting...");
+    }
+
+    @After
+    public void tearDown() {
+
+        System.out.println("Finishing...");
     }
 
     @Test

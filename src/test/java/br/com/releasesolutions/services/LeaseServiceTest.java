@@ -7,12 +7,15 @@ import br.com.releasesolutions.matchers.DayOfWeekMatcher;
 import br.com.releasesolutions.models.Lease;
 import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
+import br.com.releasesolutions.runners.ParallelRunner;
 import br.com.releasesolutions.utils.DateUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -53,6 +56,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 
+@RunWith(ParallelRunner.class)
 public class LeaseServiceTest {
 
     @InjectMocks
@@ -76,6 +80,13 @@ public class LeaseServiceTest {
     public void setup() {
 
         // Common scenery
+        System.err.println("Starting 2...");
+    }
+
+    @After
+    public void teardDown() {
+
+        System.err.println("Finishing 2...");
     }
 
     @Test
