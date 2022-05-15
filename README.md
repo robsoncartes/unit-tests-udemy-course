@@ -18,10 +18,10 @@ Surefire
 
 |           **Name**            |           **Github**            |  **Role**  |
 |:-----------------------------:|:-------------------------------:|:----------:|
-| Francisco Wagner Costa Aquino |   htts://github.com/wcaquino    | Instructor |
-|         Robson Sousa          | https://github.com/robsoncartes |  Student   |
+| Francisco Wagner Costa Aquino |   https://github.com/wcaquino   | Instructor |
+|         Robson Sousa          | https://github.com/robsoncartes |  Student   |    
 
-Link para o curso: https://www.udemy.com/course/testes-unitarios-em-java/
+Link para o curso: https://www.udemy.com/course/testes-unitarios-em-java
 
 \
 \
