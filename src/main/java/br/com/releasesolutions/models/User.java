@@ -26,7 +26,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-        User user = (User) o;
+        var user = (User) o;
         return Objects.equals(name, user.name);
     }
 
