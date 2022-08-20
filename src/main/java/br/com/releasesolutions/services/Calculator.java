@@ -2,11 +2,13 @@ package br.com.releasesolutions.services;
 
 import br.com.releasesolutions.exceptions.DivideByZeroException;
 
+import java.util.logging.Logger;
+
 public class Calculator {
 
     public int sum(int a, int b) {
 
-        System.out.println("Print this comment if sum method is invoked.");
+        Logger.getLogger("Print this comment if sum method is invoked.");
 
         return a + b;
     }
@@ -28,8 +30,8 @@ public class Calculator {
         return Integer.valueOf(a) / Integer.valueOf(b);
     }
 
-    public void printSomething(){
+    public void printSomething() {
 
-        System.out.println("Print a text.");
+        Logger.getLogger("Print a text.");
     }
 }
