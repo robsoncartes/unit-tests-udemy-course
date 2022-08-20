@@ -18,8 +18,12 @@ public class DateUtils {
      * @return
      */
 
+    private DateUtils(Date date, int days){
+
+    }
+
     public static Date addDays(Date date, int days) {
-        Calendar calendar = Calendar.getInstance();
+        var calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(DAY_OF_MONTH, days);
 
@@ -48,7 +52,7 @@ public class DateUtils {
 
     public static Date getDate(int day, int month, int year) {
 
-        Calendar calendar = Calendar.getInstance();
+        var calendar = Calendar.getInstance();
         calendar.set(DAY_OF_MONTH, day);
         calendar.set(MONTH, month - 1);
         calendar.set(YEAR, year);
@@ -64,10 +68,10 @@ public class DateUtils {
 
     public static boolean isSameDate(Date date1, Date date2) {
 
-        Calendar calendar1 = Calendar.getInstance();
+        var calendar1 = Calendar.getInstance();
         calendar1.setTime(date1);
 
-        Calendar calendar2 = Calendar.getInstance();
+        var calendar2 = Calendar.getInstance();
         calendar2.setTime(date2);
 
         return calendar1.get(DAY_OF_MONTH) == calendar2.get(DAY_OF_MONTH)
@@ -85,7 +89,7 @@ public class DateUtils {
 
     public static boolean checkDayOfWeek(Date date, int dayOfWeek) {
 
-        Calendar calendar = Calendar.getInstance();
+        var calendar = Calendar.getInstance();
         calendar.setTime(date);
 
         return calendar.get(Calendar.DAY_OF_WEEK) == dayOfWeek;
