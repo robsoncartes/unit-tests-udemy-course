@@ -31,8 +31,8 @@ public class LeaseService {
 
         Double totalPrice = 0d;
 
-        for (int i = 0; i < movies.size(); i++) {
-            Movie movie = movies.get(i);
+        for (var i = 0; i < movies.size(); i++) {
+            var movie = movies.get(i);
             Double moviePrice = movie.getLeasePrice();
 
             switch (i) {
@@ -82,13 +82,13 @@ public class LeaseService {
             throw new RentalException("User negatived.");
         }
 
-        Lease lease = new Lease();
+        var lease = new Lease();
         lease.setMovies(movies);
         lease.setUser(user);
         lease.setLeaseDate(getDate());
         lease.setPrice(getTotalPrice(movies));
 
-        Date deliveryDate = getDate();
+        var deliveryDate = getDate();
         deliveryDate = addDays(deliveryDate, 1);
 
         boolean isSunday = DateUtils.checkDayOfWeek(deliveryDate, Calendar.SUNDAY);
@@ -121,7 +121,7 @@ public class LeaseService {
 
     public void extendLease(Lease lease, int days) {
 
-        Lease newLease = new Lease();
+        var newLease = new Lease();
         newLease.setUser(lease.getUser());
         newLease.setMovies(lease.getMovies());
         newLease.setLeaseDate(getDate());

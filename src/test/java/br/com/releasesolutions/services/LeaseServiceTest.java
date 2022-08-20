@@ -9,7 +9,6 @@ import br.com.releasesolutions.models.Movie;
 import br.com.releasesolutions.models.User;
 import br.com.releasesolutions.runners.ParallelRunner;
 import br.com.releasesolutions.utils.DateUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
