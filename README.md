@@ -1,6 +1,6 @@
 # Curso: Teste Unitário em Java: JUnit, Mockito, PowerMock e TDD
 
-![license mit](https://img.shields.io/github/license/robsoncartes/unit-tests-udemy-course?logo=MIT&style=plastic&color=red)
+![license mit](https://img.shields.io/github/license/robsoncartes/unit-tests-udemy-course)
 
 #### Os tópicos abordados nesse curso incluem:
 
